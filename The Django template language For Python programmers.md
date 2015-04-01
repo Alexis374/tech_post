@@ -113,6 +113,7 @@ def sensitive_function(self):
 sensitive_function.alters_data = True
 ```
 + 你偶尔可能不需要调用callable的变量，想关闭这个特性。设置属性`do_not_call_in_templates = True`，模板系统会把变量当成不可调用的，这样就可以访问这个变量的属性了 （评注：估计一般没人会这么干）
+
 ---
 ######非法变量如何处理：
 若变量不存在，插入 ` TEMPLATE_STRING_IF_INVALID`设置的值
@@ -324,7 +325,7 @@ django根据TEMPLATE_LOADERS 按顺序查找对应的加载器，直到找到为
 
 ---
 模板来源
-TEMPLATE_DEBUG =True，每个Template对象又一个origin属性，记录是从哪个模板来的。
+TEMPLATE_DEBUG =True，每个Template对象有一个origin属性，记录是从哪个模板来的。
 class loader.LoaderOrigin：
 从模板加载器创建的Templates对象会用 django.template.loader.LoaderOrigin 类。name 模板文件路径 loadname传递给加载器的相对路径。
 class StringOrigin：
