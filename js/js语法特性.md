@@ -7,7 +7,7 @@
 	+ 无返回值的函数返回undefined
 + 全局变量实际上是全局对象的属性。浏览器中，全局对象缺省是window
 + 声明提升：你可以引用稍后声明的变量，而不会引发异常。注意仅仅是**不引发异常**而已， 变量感觉上是被“举起”或提升到了所有函数和语句之前。但是，未被初始化的变量仍将返回 undefined 值
-```
+```js
 //example1
 console.log(x === undefined); // logs "true"
 var x = 3;  // 声明提升，不返回异常，但上句仍是 undefined
@@ -53,6 +53,28 @@ avg.call(null,2,3,4,5,6,7);
 ```
 + `apply`,`call`函数的第一个参数是要绑定的对象，如func.call(obj,arg1,arg2),函数func内部的this指代的就是obj。上例中avg函数内没有this，可以不传递。
 + 当func中有this，而传给apply或call的对象是null/undefined时，则内部的this指的是全局对象
++ 函数是对象，函数名（包括obj.func Constructor.prototype.func）其实是指向同一段代码的地址，相互赋值传递的也是地址;根据调用者不同（即函数内this的指向不同），产生不同的效果
+```js
+function Person(firstName) {
+  this.firstName = firstName;
+}
+
+Person.prototype.sayHello = function() {
+  alert("Hello, I'm " + this.firstName);
+};
+
+var person1 = new Person("Alice");
+var person2 = new Person("Bob");
+var helloFunction = person1.sayHello;
+
+person1.sayHello();                                 // alerts "Hello, I'm Alice"
+person2.sayHello();                                 // alerts "Hello, I'm Bob"
+helloFunction();   // this 指向window对象           // alerts "Hello, I'm undefined" (or fails
+                                                    // with a TypeError in strict mode)
+alert(helloFunction === person1.sayHello);          // alerts true
+alert(helloFunction === Person.prototype.sayHello); // alerts true
+helloFunction.call(person1);                        // alerts "Hello, I'm Alice"
+```
 + new 关键字，创建一个空对象，并使函数内部的this指向这个对象，在这个对象上进行增加属性。
 + 共有的方法加入到原型中。
 + 闭包。闭包指有权访问另一个函数作用域中变量的函数。
