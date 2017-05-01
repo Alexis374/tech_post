@@ -1,7 +1,7 @@
-###django 模板语言：程序员部分
+### django 模板语言：程序员部分
 从技术的观点来介绍django模板语言——如何工作以及怎么扩展
 
-####基础
+#### 基础
 ---
 `template`是个用django模板语言标记的文本文档，或平常的python字符串，可以包含块标签（`block tags`）和变量
 block tags是在template里的标记，用于某些功能，如输出内容，组成控制结构，从数据库取出数据或访问其他模板标签。
@@ -11,13 +11,13 @@ block tags是在template里的标记，用于某些功能，如输出内容，�
 模板通过 从context里取出变量值替换变量的“洞”和执行所有的块标签，来渲染（`render`）一个上下文(context)
 
 ---
-####用模板系统
+#### 用模板系统
 `class Template`
 2步：
 + 首先，编译原始模板代码到`Template`对象
 + 调用`Template`对象的`render()`方法，用给定的context填充
 
-#####编译一个字符串
+##### 编译一个字符串
 直接调用：
 ```python
 >> from django.template import Template
@@ -30,8 +30,8 @@ block tags是在template里的标记，用于某些功能，如输出内容，�
 由于性能原因，系统只解析一次原始模板代码——在建立Template对象的时候，之后，内部存储为“node”结构。
 即使解析也是很快的，大多数是通过调用简单的、短的正则表达式完成解析的。
 
-#####渲染上下文
-######render(context)
+##### 渲染上下文
+###### render(context)
 一旦拥有了Template对象，就可以用它渲染一个或多个上下文。Context类存在于[django.template.Context](https://docs.djangoproject.com/en/1.7/ref/templates/api/#django.template.Context)
 其构造函数接收2个参数，一个字典，映射着变量名和值；另一个是当前的app名，用于帮助[反向解析命名的url](https://docs.djangoproject.com/en/1.7/topics/http/urls/#topics-http-reversing-url-namespaces),这个参数可以省略
 ```python
@@ -46,7 +46,7 @@ block tags是在template里的标记，用于某些功能，如输出内容，�
 >>> t.render(c)
 "My name is Dolores."
 ```
-######变量和查询
+###### 变量和查询
 变量名由字母数字下划线和点组成，点有着特殊含义——查询。
 foo.bar 查询顺序：
 +字典查询 `foo["bar"]`
@@ -115,18 +115,18 @@ sensitive_function.alters_data = True
 + 你偶尔可能不需要调用callable的变量，想关闭这个特性。设置属性`do_not_call_in_templates = True`，模板系统会把变量当成不可调用的，这样就可以访问这个变量的属性了 （评注：估计一般没人会这么干）
 
 ---
-######非法变量如何处理：
+###### 非法变量如何处理：
 若变量不存在，插入 ` TEMPLATE_STRING_IF_INVALID`设置的值
 在过滤器上应用非法值时：若` TEMPLATE_STRING_IF_INVALID`为空，过滤器会被应用，否则过滤器被忽略。
 在 if for regroup模板标签上时，会有一些不同：若非法值提供给这三个标签，变量被解释为为None，在这些标签里的过滤器会一直被应用为非法的值。
 如果` TEMPLATE_STRING_IF_INVALID`值里面含有一个`%s`，这个格式化标记会被替换为非法变量的名称。
 
 **注意** 尽管`TEMPLATE_STRING_IF_INVALID `可以作为很好的调试工具，在开发过程中进行设置也不是一个明智的决定。许多模板，包括admin的，依赖于对不存在的变量进行静默处理，如果这个值被改写，你会遇到渲染的问题。这个值应该只在调试特定模板的时候设置，一旦调试结束需要清除。
-######内建变量
+###### 内建变量
 每个context都带有 True False None，对应python的变量
 
 ---
-######字符串的限制
+###### 字符串的限制
 模板语言没有办法转码自己语法的字符。如若需要输出 {% 和%}，需要`templatetag`这个标签，[详见](https://docs.djangoproject.com/en/1.7/ref/templates/builtins/#std:templatetag-templatetag).
 同样的问题也存在于你想要在 模板过滤器(template filter)或标签参数(tag arguments)中。例如，当解析block时，parser寻找{%之后第一个出现的 %}，这就要避免"%}"出现在字符串里。下面例子中会出现TemplateSyntaxError
 ```html
@@ -139,7 +139,7 @@ sensitive_function.alters_data = True
 如果你必须这么做，把他们存放在模板变量里，或用自定义的模板标签或过滤器
 
 ----
-####与上下文对象打交道
+#### 与上下文对象打交道
 class Context
 大多数时候，通过传递一个完全填充的字典来实例化一个Context对象，但你可以在实例化之后增加和删除条目，用字典的方法
 ```python
@@ -233,7 +233,7 @@ class ContextTest(unittest.TestCase):
 ```
 
 ---
-#####派生Context类:RequestContext
+##### 派生Context类:RequestContext
 RequestContext不同之处：
 构造时接收 HttpRequest 作为第一个参数，`c = RequestContext(request, {'foo': 'bar',})`
 第二个不同是，自动填入了一些变量，这些变量是来自TEMPLATE_CONTEXT_PROCESSORS设置项。
@@ -278,10 +278,10 @@ django.core.context_processors.csrf：增加了csrf_token
 django.contrib.messages.context_processors.messages：messages ：消息的列表 DEFAULT_MESSAGE_LEVELS：消息层级的数字表示（1.7新增）
 
 ---
-######自定义上下文处理器：
+###### 自定义上下文处理器：
 根据定义接收request对象，返回字典。然后加到 TEMPLATE_CONTEXT_PROCESSORS 或是上文提到的作为RequestContext的第三个参数(list中的元素)
 
-#####加载模板
+##### 加载模板
 TEMPLATE_DIRS  模板文件绝对路径的tuple，django从这些路径里加载文件。即使在windows上，也要用'/'分隔路径。
 ```python
 #注意末尾没有 /
@@ -290,7 +290,7 @@ TEMPLATE_DIRS = (
     "/home/html/templates/default",
 )
 ```
-#####python api
+##### python api
 django.template.loader有两个函数，`get_template(template_name[, dirs])`和`select_template(template_name_list[, dirs])`，dir参数是1.7新加的，为了覆盖TEMPLATE_DIRS的设置。
 两者都返回编译后的模板，即Template对象。`get_template`接收一个模板名，`select_template`接收模板名list。这两个函数，根据TEMPLATE_DIRS（或dir参数）和提供的模板名，拼接文件名，访问，编译，找到第一个模板为止，否则产生模板不存在的异常。
 
@@ -298,7 +298,7 @@ django.template.loader有两个函数，`get_template(template_name[, dirs])`和
 用子文件夹
 这种方式是支持的，并且是建议的。将模板按app进行分类，这样比直接放在一个template文件夹下要好。`get_template('news/story_detail.html')`。注意news前面没有斜杠。
 
-#####加载器的种类
+##### 加载器的种类
 默认用基于文件系统的loader。在setting通过 TEMPLATE_LOADERS 设置。
 class filesystem.Loader:在 TEMPLATE_LOADERS 这样写：`django.template.loaders.filesystem.Loader`
 根据 TEMPLATE_DIRS 加载。
@@ -342,12 +342,12 @@ rendered = render_to_string('my_template.html', {'foo': 'bar'})
 render_to_response() 正是调用了这个方法，来生成HttpResponse对象。
 
 ---
-####将模板系统配置成单独模式
+#### 将模板系统配置成单独模式
 这部分是为了让你用模板系统作为其他应用的输出组件。
 需要参考[Using settings without setting DJANGO_SETTINGS_MODULE](https://docs.djangoproject.com/en/1.7/topics/settings/#settings-without-django-settings-module),仅导入模板系统合适的模块，调用 `django.conf.settings.configure()`，指定你想指定的设置，包括但不限于 TEMPLATE_DIRS ，DEFAULT_CHARSET（默认utf8），以及任何以TEMPLATE开头的。
 
 ---
-####用其他的模板语言
+#### 用其他的模板语言
 像jinja2等，` Context`对象和`render_to_response()`还可以继续使用。
 django的Template接口很简单，构造函数接收字符串，一个render方法，接收Context对象。
 如果其他模板语言的render方法接收字典而非Context对象，可以做如下包装：

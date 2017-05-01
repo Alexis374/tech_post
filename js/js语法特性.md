@@ -1,4 +1,4 @@
-####js语法特性
+#### js语法特性
 
 + `null` 和 `undefined`
 	+ 只声明未初始化的变量返回`undefined`

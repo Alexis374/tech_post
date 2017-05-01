@@ -1,4 +1,4 @@
-####jquery note
+#### jquery note
 + 选择器
 	+ 常规的css选择器，如 id，class，元素，*，','（并列选择），'ance desc'(选取祖先是ance的desc)，'parent>child'(选取父元素是parent的child)，'prev+next'(选next，这个next的前面兄弟**元素**元素是prev),'prev~siblings'(选取与prev相邻的，在prev之后的所有sibling元素)
 	+ 过滤性选择器,类似伪类：':first'(只返回一个),':eq(index)',':contains(text)'(文本中含有text的元素),':has(selector)'(内部拥有另一个选择器selecotr)，':hidden'(获取不可见的元素，如p:hidden),':visible'(获取可见元素)，'[attribute=value]'(有属性是value的元素)，同理有'[attr!=val]'(不等于),'[attr*=val]'(attr包含val)，':first-child'（选取第一个子元素的集合）

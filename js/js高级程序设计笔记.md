@@ -11,7 +11,7 @@
 
 
 -------------------
-###对象
+### 对象
 对象属性的特性(the attribute of property)
 1. 数据属性：
 	+ `[[Configurable]]` 能否删除属性以及修改其他的特性，或能否改为访问器属性。default：true

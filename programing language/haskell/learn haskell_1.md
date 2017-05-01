@@ -1,5 +1,5 @@
-####Haskell入门
-######本篇是浏览[http://learnyoua.haskell.sg/](learnyoua.haskell.sg)所做笔记，作为haskell的入门笔记
+#### Haskell入门
+###### 本篇是浏览[http://learnyoua.haskell.sg/](learnyoua.haskell.sg)所做笔记，作为haskell的入门笔记
 ----
 + haskell 静态类型(statically typed)，自动类型推导(type inference),惰性求值，引用透明
 	+ 引用透明：以同样的参数调用同一个函数多次，所得结果完全一样

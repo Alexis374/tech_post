@@ -1,4 +1,4 @@
-####basic ruby
+#### basic ruby
 ----
 + install gems：
 	+ install remote: `gem install <gem-name>`
